@@ -1,0 +1,97 @@
+@if (isOpen){
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex min-h-screen items-center justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity backdrop-blur-sm" (click)="onClose()"></div>
+            <div class="inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        {{ isEditing ? 'Edit Task' : 'New Task'}}
+                    </h2>
+                    <button
+                        (click)="onClose()"
+                        class="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                    >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                @if (error()) {
+                    <div class="mx-6 mt-4 rounded-lg bg-red-50 p-4 border border-red-200">
+                        <p class="text-sm font-medium text-red-800">{{ error() }}</p>
+                    </div>
+                }
+
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="space-y-5 px-6 py-5">
+                        <div>
+                            <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+                            <input
+                                id="title"
+                                type="text"
+                                formControlName="title"
+                                placeholder="Enter task title"
+                                class="block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-20"
+                            />
+                            @if (form.get('title')?.touched && form.get('title')?.errors){
+                                <p class="mt-2 text-sm text-red-600 font-medium">Title is required</p>
+                            }
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Description (Optional)</label>
+                            <textarea
+                                id="description"
+                                formControlName="description"
+                                rows="3"
+                                placeholder="Enter task description"
+                                class="block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-400 transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-20 resize-none"
+                            >
+                            </textarea>
+                        </div>
+
+                        <div>
+                            <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                            <select
+                                id="status"
+                                formControlName="status"
+                                class="block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-20"
+                            >
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4">
+                        <button
+                            type="button"
+                            (click)="onClose()"
+                            class="flex-1 rounded-lg border-2 border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-opacity-30"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            [disabled]="loading()"
+                            class="flex-1 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:from-indigo-700 hover:to-indigo-800 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
+                        >
+                            @if (loading()) {
+                                <span class="flex items-center justify-center">
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Saving...
+                                </span>
+                            } @else {
+                                <span>{{ isEditing ? 'Update' : 'Create' }}</span>
+                            }
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

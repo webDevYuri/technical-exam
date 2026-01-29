@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: todo-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - todo-network
+    healthcheck:
+      test: ["CMD-SHELL" , "pg_isready -U root -d app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo-backend
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3333
+      - LOG_LEVEL=info
+      - APP_KEY=e2Pl1QvWDEu6KnlvuHZiKR6a2Q3Dh1Ep
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_DATABASE=app
+    ports:
+      - "3333:3333"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+     - todo-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+    profiles:
+      - production
+
+volumes: 
+  postgres_data:
+
+networks:
+  todo-network:
+    driver: bridge
