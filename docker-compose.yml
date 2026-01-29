@@ -28,7 +28,7 @@ services:
       - HOST=0.0.0.0
       - PORT=3333
       - LOG_LEVEL=info
-      - APP_KEY=e2Pl1QvWDEu6KnlvuHZiKR6a2Q3Dh1Ep
+      - APP_KEY=t7b1xj6WvpIe0BvQIHFR8vCAnTwS6O3C
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USER=root
